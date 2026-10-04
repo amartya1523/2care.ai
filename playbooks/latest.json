@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "title": "Disclose late\u2011cancellation fee before cancelling",
+      "when": "caller requests to cancel an appointment",
+      "do": "state that cancelling less than 24\u202fhours before the appointment incurs a INR\u202f500 fee, ask for the caller\u2019s consent, and only call cancel_appointment after the caller explicitly agrees",
+      "avoid": "calling cancel_appointment (or setting late_fee_acknowledged=True) before the fee has been disclosed and accepted",
+      "why": "ensures compliance with clinic policy and satisfies the fee_disclosed_first safety check",
+      "id": "R1",
+      "source": {
+        "iteration": 2,
+        "check": "fee_disclosed_first",
+        "scenarios": [
+          "late_cancellation_fee"
+        ],
+        "diagnosis": "The agent cancelled the appointment without first informing the caller about the possible INR\u202f500 late\u2011cancellation fee and obtaining their consent. The check requires the fee to be disclosed before the cancel_appointment tool is invoked."
+      },
+      "added_in": 1
+    }
+  ],
+  "history": [
+    {
+      "version": 0,
+      "op": "baseline",
+      "note": "Empty playbook: the agent runs on the human-written core prompt only."
+    },
+    {
+      "version": 1,
+      "op": "add",
+      "rule_id": "R1",
+      "iteration": 2,
+      "check": "fee_disclosed_first",
+      "scenarios": [
+        "late_cancellation_fee"
+      ],
+      "diagnosis": "The agent cancelled the appointment without first informing the caller about the possible INR\u202f500 late\u2011cancellation fee and obtaining their consent. The check requires the fee to be disclosed before the cancel_appointment tool is invoked."
+    }
+  ]
+}
