@@ -1,0 +1,81 @@
+{
+  "clinic": {
+    "name": "Sunrise Family Clinic",
+    "city": "Bangalore",
+    "timezone": "Asia/Kolkata",
+    "emergency_number": "112",
+    "hours": {
+      "mon": ["09:00", "17:00"],
+      "tue": ["09:00", "17:00"],
+      "wed": ["09:00", "17:00"],
+      "thu": ["09:00", "17:00"],
+      "fri": ["09:00", "17:00"],
+      "sat": ["09:00", "13:00"],
+      "sun": null
+    },
+    "lunch_break": ["13:00", "14:00"],
+    "late_cancellation": {"window_hours": 24, "fee_inr": 500},
+    "booking_horizon_days": 60
+  },
+  "appointment_types": {
+    "new_patient": {"label": "new patient consultation", "minutes": 30},
+    "follow_up": {"label": "follow-up visit", "minutes": 15},
+    "annual_physical": {"label": "annual physical", "minutes": 45},
+    "vaccination": {"label": "vaccination", "minutes": 15}
+  },
+  "providers": [
+    {
+      "id": "D-RAO",
+      "name": "Dr. Asha Rao",
+      "specialty": "general_practice",
+      "min_age": 18,
+      "max_age": null,
+      "days": ["mon", "tue", "wed", "thu", "fri", "sat"],
+      "appointment_types": ["new_patient", "follow_up", "annual_physical"]
+    },
+    {
+      "id": "D-MEHTA",
+      "name": "Dr. Vikram Mehta",
+      "specialty": "pediatrics",
+      "min_age": null,
+      "max_age": 17,
+      "days": ["mon", "wed", "fri", "sat"],
+      "appointment_types": ["new_patient", "follow_up", "vaccination"]
+    },
+    {
+      "id": "D-ORTIZ",
+      "name": "Dr. Lena Ortiz",
+      "specialty": "dermatology",
+      "min_age": null,
+      "max_age": null,
+      "days": ["tue", "thu"],
+      "appointment_types": ["new_patient", "follow_up"]
+    }
+  ],
+  "patients": [
+    {"id": "P-1001", "full_name": "Priya Nair", "date_of_birth": "1988-07-22", "phone": "9845011223"},
+    {"id": "P-1002", "full_name": "Rahul Verma", "date_of_birth": "1979-03-14", "phone": "9845022334"},
+    {"id": "P-1003", "full_name": "Meera Kapoor", "date_of_birth": "1992-11-02", "phone": "9845033445"},
+    {"id": "P-1004", "full_name": "Aarav Shah", "date_of_birth": "2018-05-09", "phone": "9845044556"},
+    {"id": "P-1005", "full_name": "Neha Shah", "date_of_birth": "1986-01-30", "phone": "9845044556"},
+    {"id": "P-1006", "full_name": "Daniel Fernandes", "date_of_birth": "1965-09-12", "phone": "9845055667"},
+    {"id": "P-1007", "full_name": "Kavya Iyer", "date_of_birth": "1995-04-18", "phone": "9845066778"}
+  ],
+  "appointments": [
+    {"id": "A-5001", "patient_id": "P-1003", "provider_id": "D-ORTIZ", "start": "2026-10-06T11:00", "type": "follow_up", "reason": "eczema review", "status": "booked"},
+    {"id": "A-5002", "patient_id": "P-1006", "provider_id": "D-RAO", "start": "2026-10-05T15:00", "type": "follow_up", "reason": "blood pressure review", "status": "booked"},
+    {"id": "A-5003", "patient_id": "P-1002", "provider_id": "D-RAO", "start": "2026-10-08T10:00", "type": "follow_up", "reason": "diabetes follow-up", "status": "booked"},
+    {"id": "A-5004", "patient_id": "P-1007", "provider_id": "D-RAO", "start": "2026-10-09T16:00", "type": "follow_up", "reason": "thyroid follow-up", "status": "booked"}
+  ],
+  "busy_blocks": [
+    {"provider_id": "D-RAO", "start": "2026-10-05T09:00", "end": "2026-10-05T12:00", "note": "fully booked morning"},
+    {"provider_id": "D-RAO", "start": "2026-10-06T09:00", "end": "2026-10-06T10:30"},
+    {"provider_id": "D-RAO", "start": "2026-10-07T14:00", "end": "2026-10-07T17:00", "note": "admin afternoon"},
+    {"provider_id": "D-RAO", "start": "2026-10-09T14:00", "end": "2026-10-09T15:30"},
+    {"provider_id": "D-RAO", "start": "2026-10-16T09:00", "end": "2026-10-16T12:00"},
+    {"provider_id": "D-MEHTA", "start": "2026-10-05T09:00", "end": "2026-10-05T17:00", "note": "on leave"},
+    {"provider_id": "D-MEHTA", "start": "2026-10-07T09:00", "end": "2026-10-07T11:00"},
+    {"provider_id": "D-ORTIZ", "start": "2026-10-06T09:00", "end": "2026-10-06T10:30"},
+    {"provider_id": "D-ORTIZ", "start": "2026-10-08T14:00", "end": "2026-10-08T17:00"}
+  ]
+}
