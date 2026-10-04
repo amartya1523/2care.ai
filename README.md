@@ -9,7 +9,7 @@
 ![scenarios](https://img.shields.io/badge/scenarios-10%20train%20%2B%205%20held--out-8250df)
 ![llm](https://img.shields.io/badge/LLM-any%20OpenAI--compatible%20API-555)
 
-[Quick start](#-quick-start) · [How it learns](#-how-it-learns) · [What the evaluator can't see](#-where-a-transcript-only-judge-is-blind) · [Design note](DESIGN.md) · [Loop report](reports/latest_loop_report.md)
+[Results](#-results-the-loop-closing-on-a-live-run) · [Quick start](#-quick-start) · [How it learns](#-how-it-learns) · [What the evaluator can't see](#-where-a-transcript-only-judge-is-blind) · [Design note](DESIGN.md) · [Loop report](reports/latest_loop_report.md)
 
 </div>
 
@@ -35,6 +35,18 @@ This call came from a live run on the open-weight `qwen3.8-27b`, with the `[tool
 ```
 
 The agent verified first, asked before searching, offered only real slots, read the slot back, waited for a yes and only then booked. Each of those steps is **checked from the database and the tool log**, not by trusting the transcript.
+
+## 📈 Results: the loop closing on a live run
+
+| Playbook | Train score | Held-out score | Critical failures | Gate |
+|---|---|---|---|---|
+| v0: core prompt only | 0.746 | 0.762 | 4 | baseline |
+| v1 candidate, iteration 1: *"never invent an identity"* | 0.746 | 0.762 | 4 | ❌ rejected (targeted check 0.00 → 0.00) |
+| **v1, iteration 2: *"disclose the late-cancellation fee before cancelling"*** | **0.804** | **0.762** (no regression) | **3** | ✅ accepted, `fee_disclosed_first` 0.00 → 1.00 |
+
+Agent `gpt-oss-20b`, caller simulator and reflector `gpt-oss-120b`, judge `qwen3.8-27b`, all on Groq. Full report with diagnoses, rules and before/after transcripts: [`reports/latest_loop_report.md`](reports/latest_loop_report.md). Learned rule with provenance: [`playbooks/latest.json`](playbooks/latest.json).
+
+The rejected iteration matters as much as the accepted one. The rule *sounded* right, but behaviour didn't change, so the gate refused it. The defence moved into code instead: `verify_patient` now refuses a name the caller never said.
 
 ## ⚡ Quick start
 
