@@ -13,6 +13,7 @@ Scoping decisions:
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass, field
 from typing import Any, Callable
 
@@ -147,6 +148,7 @@ class Session:
     escalation: dict[str, Any] | None = None
     trace: list[dict[str, Any]] = field(default_factory=list)
     turn: int = 0
+    caller_said: list[str] = field(default_factory=list)  # everything the caller said, appended by the agent loop
 
     @property
     def locked(self) -> bool:
@@ -177,7 +179,17 @@ class Session:
             raise ClinicError("That patient_id has not been verified in this call. Call verify_patient first.")
 
     # ------------------------------------------------------------------ tools
+    def _require_spoken(self, full_name: str) -> None:
+        """A model can invent tool arguments ("John Doe") before the caller has said anything. If an invented
+        identity ever matched a real patient it would expose their record, so names must come from the caller."""
+        said = " ".join(self.caller_said).lower()
+        letters = re.sub(r"[^a-z]", "", said)  # catches spelled-out names: "D-A-N-I-E-L"
+        tokens = [w for w in re.sub(r"[^a-z ]", " ", (full_name or "").lower()).split() if len(w) > 2]
+        if not tokens or not any(re.search(rf"\b{re.escape(w)}\b", said) or w in letters for w in tokens):
+            raise ClinicError("The caller has not said this name. Ask the caller for their full name and date of birth; never guess or invent them.")
+
     def _t_verify_patient(self, full_name: str, date_of_birth: str, caller_relationship: str) -> dict[str, Any]:
+        self._require_spoken(full_name)
         if self.locked:
             raise ClinicError("Verification is locked after 3 failed attempts. Do not ask for more guesses; offer a transfer to front-desk staff.")
         if caller_relationship not in ("self", "parent_or_guardian"):
@@ -201,6 +213,7 @@ class Session:
         }
 
     def _t_register_new_patient(self, full_name: str, date_of_birth: str, phone: str, caller_relationship: str = "self") -> dict[str, Any]:
+        self._require_spoken(full_name)
         dob = parse_date(date_of_birth)
         p = self.clinic.register(full_name, dob, phone)
         self.verified[p["id"]] = caller_relationship

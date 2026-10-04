@@ -129,6 +129,9 @@ def improvement_loop(
     iterations_log: list[dict[str, Any]] = []
     for it in range(1, (0 if incomplete else iterations) + 1):
         clusters = [c for c in cluster_failures(current, scenarios, "train") if len(tried[c.check_id]) < max_attempts_per_cluster]
+        # Fewest failed attempts first: a failure a prompt rule could not fix (e.g. a model that invents tool
+        # arguments) should not consume every iteration while other, fixable failures wait.
+        clusters.sort(key=lambda c: len(tried[c.check_id]))
         if not clusters:
             log(f"[iter {it}] no remaining train failures to learn from — stopping")
             break

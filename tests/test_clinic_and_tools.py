@@ -9,8 +9,11 @@ from scheduler.tools import Session
 NOW = datetime(2026, 10, 5, 9, 30)
 
 
+CALLER_SAID = ["I'm Priya Nair. Calling for Meera Kapoor, Aarav Shah, Daniel Fernandes or Rahul Verma."]
+
+
 def session(**kw) -> Session:
-    return Session(clinic=Clinic.load(NOW), **kw)
+    return Session(clinic=Clinic.load(NOW), caller_said=list(CALLER_SAID), **kw)
 
 
 def call(s: Session, name: str, **args) -> dict:
@@ -150,3 +153,11 @@ def test_provider_resolves_by_name():
     assert c.provider("Dr. Asha Rao")["id"] == "D-RAO" and c.provider("rao")["id"] == "D-RAO"
     with pytest.raises(ClinicError):
         c.provider("Dr. Nobody")
+
+
+def test_cannot_verify_a_name_the_caller_never_said():
+    s = Session(clinic=Clinic.load(NOW))
+    r = call(s, "verify_patient", full_name="John Doe", date_of_birth="1990-04-12", caller_relationship="self")
+    assert not r["ok"] and "never guess" in r["error"] and s.failed_verifications == 0
+    s.caller_said.append("Hi, it's Daniel, D-A-N-I-E-L F-E-R-N-A-N-D-E-S")
+    assert call(s, "verify_patient", full_name="Daniel Fernandes", date_of_birth="1965-09-12", caller_relationship="self")["ok"]

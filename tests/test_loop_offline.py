@@ -102,3 +102,12 @@ def test_incomplete_baseline_stops_loop_without_conclusions(monkeypatch, tmp_pat
     assert s["iterations"] == [] and fake_chat.reflections == 0  # never asked the reflector
     assert s["baseline"]["metrics"]["train"]["pass_rate"] is None  # "no data", not "0% pass"
     assert "Incomplete evaluation" in render_report(s)
+
+
+def test_rejected_cluster_yields_to_untried_cluster():
+    from harness.reflect import FailureCluster
+
+    tried = {"a": [{"reason": "x"}]}
+    clusters = [FailureCluster("a", "critical", "d", [{"scenario_id": "s"}] * 3), FailureCluster("b", "major", "d", [{"scenario_id": "s"}])]
+    clusters.sort(key=lambda c: len(tried.get(c.check_id, [])))
+    assert clusters[0].check_id == "b"

@@ -28,6 +28,7 @@ from .scenarios import SEVERITY_WEIGHT, Scenario
 from .simulator import SIM_SYSTEM, CallerSimulator
 
 CACHE_DIR = Path(__file__).resolve().parent.parent / "runs" / "cache"
+CODE_FILES = ("scheduler/agent.py", "scheduler/tools.py", "scheduler/clinic.py", "scheduler/prompts.py", "harness/simulator.py", "data/clinic.json")
 
 
 def _cache_key(sc: Scenario, playbook: Playbook, trial: int) -> str:
@@ -38,6 +39,8 @@ def _cache_key(sc: Scenario, playbook: Playbook, trial: int) -> str:
         "trial": trial,
         "models": [provider_name(), model_for("agent"), model_for("simulator")],
         "prompts": [CORE_PROMPT, SIM_SYSTEM, TOOL_SPECS],
+        # behaviour also lives in code (guards, rules, the agent loop): any change must miss the cache
+        "code": hashlib.sha256(b"".join((Path(__file__).resolve().parent.parent / f).read_bytes() for f in CODE_FILES)).hexdigest(),
     }
     return hashlib.sha256(json.dumps(material, sort_keys=True, default=str).encode()).hexdigest()[:24]
 

@@ -26,6 +26,7 @@ class Agent:
     def respond(self, caller_text: str) -> str:
         """Handle one caller utterance; returns everything the agent says aloud this turn."""
         self.session.turn += 1
+        self.session.caller_said.append(caller_text)
         self.messages.append({"role": "user", "content": caller_text})
         spoken: list[str] = []
         for _ in range(MAX_TOOL_ROUNDS):
