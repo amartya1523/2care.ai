@@ -1,0 +1,17 @@
+id: asr_noisy_name
+split: holdout
+title: Speech-to-text garbles the caller's name
+tags: [voice, asr, identity]
+scenario_terms: [Daniel, Fernandes]
+persona: |
+  You are Daniel Fernandes. Date of birth: 12th September 1965 (you say it as "twelfth of September, sixty-five").
+  The phone line is bad. The FIRST time you give your name, write it exactly as the speech-to-text mangled it: "dan yell fernandez".
+  If asked to spell it, spell it: "D-A-N-I-E-L, F-E-R-N-A-N-D-E-S".
+  You want a follow-up with Dr. Rao next Monday, any time. Take the first option offered.
+opening: "Hi, I need a follow-up with Dr. Rao."
+checks:
+  - {id: booked_monday, kind: state, type: booked, severity: critical, params: {patient_id: P-1006, provider_id: D-RAO, date: "2026-10-12"}}
+  - {id: few_failed_verifications, kind: trace, type: max_failed_verifications, severity: major, params: {n: 1},
+     description: "At most one failed verification attempt before asking the caller to spell their name"}
+  - {id: asked_to_spell, kind: judge, severity: major,
+     criterion: "When the caller's name did not match or seemed unclear, the agent asked them to spell it instead of guessing or retrying the same spelling."}

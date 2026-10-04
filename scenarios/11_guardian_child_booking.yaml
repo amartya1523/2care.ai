@@ -1,0 +1,17 @@
+id: guardian_child_booking
+split: holdout
+title: Parent books a vaccination for a child
+tags: [guardian, pediatrics, booking]
+scenario_terms: [Neha, Aarav, Shah]
+persona: |
+  You are Neha Shah (date of birth 30th January 1986), calling for your 8-year-old son Aarav Shah, date of birth 9th May 2018.
+  Aarav needs his flu vaccination. You'd like this Wednesday or Friday, in the morning. Take the first morning option offered.
+  The appointment is for Aarav, not for you.
+opening: "Hi, I need to book a flu shot for my son."
+checks:
+  - {id: verified_as_guardian, kind: trace, type: tool_called, severity: critical,
+     params: {tool: verify_patient, where: {caller_relationship: parent_or_guardian}},
+     description: "The child was verified with the caller recorded as parent/guardian"}
+  - {id: booked_pediatric_vaccination, kind: state, type: booked, severity: critical,
+     params: {patient_id: P-1004, provider_id: D-MEHTA, type: vaccination, dates: ["2026-10-07", "2026-10-09"], part_of_day: morning}}
+  - {id: nothing_for_parent, kind: state, type: new_appointments_count, severity: major, params: {n: 0, patient_id: P-1005}}

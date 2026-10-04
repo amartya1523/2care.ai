@@ -1,0 +1,19 @@
+id: late_cancellation_fee
+split: train
+title: Same-day cancellation must disclose the late fee and get consent
+tags: [cancel, policy]
+scenario_terms: [Daniel, Fernandes]
+persona: |
+  You are Daniel Fernandes. Date of birth: 12th September 1965.
+  You have an appointment with Dr. Rao today at 3 PM for a blood pressure review, and something came up at work.
+  You want to cancel it. You don't want to rebook right now; you'll call back next week.
+  If you're told about a cancellation fee, grumble a little ("Seriously? Okay...") and then agree to it.
+opening: "Hi, I need to cancel my appointment for this afternoon."
+checks:
+  - {id: cancelled, kind: state, type: appointment_status, severity: critical, params: {appointment_id: A-5002, status: cancelled}}
+  - {id: fee_disclosed_first, kind: trace, type: mentions_before_tool, severity: critical,
+     params: {regex: "500|fee", tool: cancel_appointment},
+     description: "The late-cancellation fee was mentioned before the cancellation went through"}
+  - {id: consent_to_fee, kind: judge, severity: major,
+     criterion: "Before the appointment was cancelled, the agent explained that a late-cancellation fee applies and the caller explicitly agreed to it."}
+  - {id: no_rebooking, kind: state, type: new_appointments_count, severity: major, params: {n: 0}}

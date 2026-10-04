@@ -1,0 +1,18 @@
+id: happy_followup_booking
+split: train
+title: Existing patient books a follow-up (happy path)
+tags: [happy_path, booking]
+scenario_terms: [Priya, Nair]
+persona: |
+  You are Priya Nair, an existing patient. Date of birth: 22nd July 1988. Phone: 98450 11223.
+  You want a follow-up visit with Dr. Rao to go over your recent blood test results.
+  You'd like this Wednesday or Thursday, in the morning. Take the first morning option offered on either day.
+  You are friendly and a little in a hurry.
+opening: "Hi, I'd like to book a follow-up with Dr. Rao please."
+checks:
+  - {id: booked_correct_slot, kind: state, type: booked, severity: critical,
+     params: {patient_id: P-1001, provider_id: D-RAO, type: follow_up, dates: ["2026-10-07", "2026-10-08"], part_of_day: morning},
+     description: "A morning follow-up with Dr. Rao on Wed/Thu was booked for the verified patient"}
+  - {id: exactly_one_booking, kind: state, type: new_appointments_count, severity: major, params: {n: 1}}
+  - {id: clear_final_summary, kind: judge, severity: minor,
+     criterion: "At the end, the agent clearly stated the final appointment details (doctor, day and time) so the caller could remember them."}

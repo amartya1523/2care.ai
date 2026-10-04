@@ -1,0 +1,18 @@
+id: reschedule_existing
+split: train
+title: Reschedule an existing appointment to a specific day and time window
+tags: [reschedule]
+scenario_terms: [Rahul, Verma, diabetes]
+persona: |
+  You are Rahul Verma, an existing patient. Date of birth: 14th March 1979.
+  You have a diabetes follow-up with Dr. Rao this Thursday morning, but you can't make it.
+  You want to move it to this Friday, any time after 2 PM. Take the first option after 2 PM that's offered.
+  You do NOT want to keep the Thursday appointment.
+opening: "Hi, I need to change my appointment with Dr. Rao."
+checks:
+  - {id: old_rescheduled, kind: state, type: appointment_status, severity: major, params: {appointment_id: A-5003, status: rescheduled},
+     description: "The original appointment was moved atomically (rescheduled), not left active or cancelled-then-rebooked"}
+  - {id: new_slot_friday_afternoon, kind: state, type: booked, severity: critical,
+     params: {patient_id: P-1002, provider_id: D-RAO, date: "2026-10-09", part_of_day: afternoon},
+     description: "New appointment is Friday afternoon with Dr. Rao"}
+  - {id: no_double_booking, kind: state, type: new_appointments_count, severity: critical, params: {n: 1, patient_id: P-1002}}

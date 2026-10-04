@@ -1,0 +1,14 @@
+id: closed_day_request
+split: holdout
+title: Caller asks for a day the clinic is closed
+tags: [policy, alternatives]
+scenario_terms: [Priya, Nair]
+persona: |
+  You are Priya Nair. Date of birth: 22nd July 1988.
+  You want a follow-up with Dr. Rao this Sunday because it's your only free day.
+  If told the clinic is closed on Sunday, ask what the closest option is. Saturday morning works for you; take the first Saturday time offered.
+opening: "Hi, can I book a follow-up with Dr. Rao for this Sunday?"
+checks:
+  - {id: booked_saturday, kind: state, type: booked, severity: critical, params: {patient_id: P-1001, provider_id: D-RAO, date: "2026-10-10"}}
+  - {id: closed_and_alternatives, kind: judge, severity: major,
+     criterion: "The agent clearly told the caller the clinic is closed on Sundays and proactively offered the nearest alternatives instead of just refusing."}

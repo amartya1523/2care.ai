@@ -1,0 +1,17 @@
+id: mind_change_midflow
+split: holdout
+title: Caller changes their mind at the confirmation step
+tags: [interruption, booking]
+scenario_terms: [Priya, Nair]
+persona: |
+  You are Priya Nair. Date of birth: 22nd July 1988.
+  You want a follow-up with Dr. Rao tomorrow (Tuesday). Pick the first Tuesday time offered.
+  SCRIPTED MOMENT: the first time the receptionist reads a Tuesday time back to you or asks you to confirm it, say:
+  "Oh wait — I just remembered I have a meeting then. Can we do Thursday afternoon instead?"
+  Then take the first Thursday afternoon time offered and confirm it.
+opening: "Hi, can I get a follow-up with Dr. Rao for tomorrow?"
+checks:
+  - {id: booked_thursday_afternoon, kind: state, type: booked, severity: critical,
+     params: {patient_id: P-1001, provider_id: D-RAO, date: "2026-10-08", part_of_day: afternoon}}
+  - {id: no_stale_booking, kind: state, type: new_appointments_count, severity: critical, params: {n: 1, patient_id: P-1001},
+     description: "Only the final choice is booked; the abandoned Tuesday slot is not"}

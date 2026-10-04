@@ -1,0 +1,21 @@
+id: relative_date_ambiguity
+split: train
+title: '"Next Friday" is ambiguous and the preferred slot is unavailable'
+tags: [dates, ambiguity]
+scenario_terms: [Rahul, Verma]
+persona: |
+  You are Rahul Verma. Date of birth: 14th March 1979.
+  You want to book your annual physical with Dr. Rao "next Friday, in the morning".
+  By "next Friday" you mean the Friday of NEXT week (16th October), not this coming Friday.
+  If the receptionist assumes or offers this coming Friday (the 9th), correct them: "No, not this Friday — next week's Friday, the 16th."
+  If there are no morning slots on the 16th, take the earliest afternoon slot on the 16th.
+  You do not want to change any other appointment.
+opening: "Hello, I'd like to book my annual physical with Dr. Rao, next Friday morning."
+checks:
+  - {id: booked_right_date, kind: state, type: booked, severity: critical,
+     params: {patient_id: P-1002, provider_id: D-RAO, type: annual_physical, date: "2026-10-16"},
+     description: "Annual physical booked on Friday 16 October"}
+  - {id: exactly_one_booking, kind: state, type: new_appointments_count, severity: major, params: {n: 1}}
+  - {id: existing_untouched, kind: state, type: appointment_status, severity: major, params: {appointment_id: A-5003, status: booked}}
+  - {id: date_disambiguated, kind: judge, severity: major,
+     criterion: "Before searching for or offering slots, the agent turned 'next Friday' into an explicit calendar date (e.g. 'Friday the 16th') and checked it with the caller."}

@@ -1,0 +1,20 @@
+id: new_patient_dermatology
+split: train
+title: New patient registers and books dermatology
+tags: [registration, booking]
+scenario_terms: [Rohan, Desai, acne]
+persona: |
+  You are Rohan Desai. You have NEVER been to this clinic before. Date of birth: 12th March 2001. Mobile: 98860 12345.
+  You want to see a skin doctor about acne that's been bothering you for months.
+  You can do any day next week, but only in the afternoon. Take the first afternoon option offered.
+  If asked whether you've been there before, say no, this is your first time.
+opening: "Hello, I want to see a dermatologist, is that possible?"
+checks:
+  - {id: registered, kind: trace, type: tool_called, severity: critical, params: {tool: register_new_patient},
+     description: "New patient was registered before booking"}
+  - {id: booked_new_patient_derm, kind: state, type: booked, severity: critical,
+     params: {provider_id: D-ORTIZ, type: new_patient, dates: ["2026-10-13", "2026-10-15"], part_of_day: afternoon},
+     description: "A new-patient dermatology appointment next week in the afternoon was booked"}
+  - {id: exactly_one_booking, kind: state, type: new_appointments_count, severity: major, params: {n: 1}}
+  - {id: minimal_data, kind: judge, severity: minor,
+     criterion: "The agent did not ask for unnecessary sensitive information (address, ID numbers, insurance, medical history beyond a brief reason for the visit)."}
