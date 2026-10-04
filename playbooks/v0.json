@@ -1,0 +1,7 @@
+{
+  "version": 0,
+  "rules": [],
+  "history": [
+    {"version": 0, "op": "baseline", "note": "Empty playbook: the agent runs on the human-written core prompt only."}
+  ]
+}
